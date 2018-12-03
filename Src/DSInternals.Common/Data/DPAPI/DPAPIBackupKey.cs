@@ -24,6 +24,7 @@
         private const string RSAP12FileNameFormat = "ntds_capi_{0}.pfx";
         private const string LegacyKeyFileNameFormat = "ntds_legacy_{0}.key";
         private const string UnknownKeyFileNameFormat = "ntds_unknown_{0}_{1}.key";
+        private const string KiwiCommandFormat = "REM Add this parameter to at least the first dpapi::masterkey command: /pvk:\"{0}\"";
         private const int PVKHeaderSize = 6 * sizeof(int);
         private const uint PVKHeaderMagic = 0xb0b5f11e;
         private const uint PVKHeaderVersion = 0;
@@ -39,33 +40,49 @@
             // Decrypt the secret value
             byte[] encryptedSecret;
             dsObject.ReadAttribute(CommonDirectoryAttributes.CurrentValue, out encryptedSecret);
-            this.Data = pek.DecryptSecret(encryptedSecret);
+            byte[] decryptedBlob = pek.DecryptSecret(encryptedSecret);
 
-            // Parse DN to get key ID or pointer type:
-            this.DistinguishedName = dsObject.DistinguishedName;
-            var keyName = GetSecretNameFromDN(this.DistinguishedName);
+            // Initialize properties
+            this.Initialize(dsObject.DistinguishedName, decryptedBlob);
+        }
 
-            switch(keyName)
+        public DPAPIBackupKey(string distinguishedName, byte[] blob)
+        {
+            // Validate the input
+            Validator.AssertNotNullOrWhiteSpace(distinguishedName, "distinguishedName");
+            Validator.AssertNotNull(blob, "blob");
+
+            this.Initialize(distinguishedName, blob);
+        }
+
+        public override string FilePath
+        {
+            get
             {
-                case null:
-                    // We could not parse the DN, so exit with Unknown as the key type
-                    this.Type = DPAPIBackupKeyType.Unknown;
-                    break;
-                case PreferredRSAKeyPointerName:
-                    this.Type = DPAPIBackupKeyType.PreferredRSAKeyPointer;
-                    // Interpret the raw data as Guid
-                    this.KeyId = new Guid(this.Data);
-                    break;
-                case PreferredLegacyKeyPointerName:
-                    this.Type = DPAPIBackupKeyType.PreferredLegacyKeyPointer;
-                    // Interpret the raw data as Guid
-                    this.KeyId = new Guid(this.Data);
-                    break;
-                default:
-                    // Actual Key, so we parse its Guid and version
-                    this.KeyId = Guid.Parse(keyName);
-                    this.Type = (DPAPIBackupKeyType)BitConverter.ToInt32(this.Data, KeyVersionOffset);
-                    break;
+                switch(this.Type)
+                {
+                    case DPAPIBackupKeyType.RSAKey:
+                        // .pvk file
+                        return String.Format(RSAKeyFileNameFormat, this.KeyId);
+                    case DPAPIBackupKeyType.LegacyKey:
+                        // .key file
+                        return String.Format(LegacyKeyFileNameFormat, this.KeyId);
+                    case DPAPIBackupKeyType.Unknown:
+                        // Generate an additional random ID to prevent potential filename conflicts
+                        int rnd = new Random().Next();
+                        return String.Format(UnknownKeyFileNameFormat, this.KeyId, rnd);
+                    default:
+                        // Saving pointers or other domain key types to files is not supported.
+                        return null;
+                }
+            }
+        }
+
+        public override string KiwiCommand
+        {
+            get
+            {
+                return this.Type == DPAPIBackupKeyType.RSAKey ? String.Format(KiwiCommandFormat, this.FilePath) : null;
             }
         }
 
@@ -86,7 +103,7 @@
             private set;
         }
 
-        public override void SaveTo(string directoryPath)
+        public override void Save(string directoryPath)
         {
             // The target directory must exist
             Validator.AssertDirectoryExists(directoryPath);
@@ -104,8 +121,7 @@
                     byte[] certificate = this.Data.Cut(RSAPrivateKeyOffset + privateKeySize, certificateSize);
                     
                     // Create PVK file
-                    var pvkFile = String.Format(RSAKeyFileNameFormat, this.KeyId);
-                    fullFilePath = Path.Combine(directoryPath, pvkFile);
+                    fullFilePath = Path.Combine(directoryPath, this.FilePath);
                     byte[] pvk = EncapsulatePvk(privateKey);
                     File.WriteAllBytes(fullFilePath, pvk);
 
@@ -122,21 +138,53 @@
                     break;
                 case DPAPIBackupKeyType.LegacyKey:
                     // We create one KEY file, while cropping out the key version.
-                    string keyFile = String.Format(LegacyKeyFileNameFormat, this.KeyId);
-                    fullFilePath = Path.Combine(directoryPath, keyFile);
+                    fullFilePath = Path.Combine(directoryPath, this.FilePath);
                     File.WriteAllBytes(fullFilePath, this.Data.Cut(KeyVersionSize));
                     break;
                 case DPAPIBackupKeyType.Unknown:
-                    // Generate an additional random ID to prevent potential filename conflicts
-                    int rnd = new Random().Next();
-                    string unknownKeyFile = String.Format(UnknownKeyFileNameFormat, this.KeyId, rnd);
-                    fullFilePath = Path.Combine(directoryPath, unknownKeyFile);
+                    fullFilePath = Path.Combine(directoryPath, this.FilePath);
                     File.WriteAllBytes(fullFilePath, this.Data);
                     break;
                 case DPAPIBackupKeyType.PreferredLegacyKeyPointer:
                 case DPAPIBackupKeyType.PreferredRSAKeyPointer:
                 default:
                     // Do not save these pointer keys
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Object initializer that is shared between multiple constructors.
+        /// </summary>
+        /// <param name="distinguishedName">Distinguished name of the DPAPI backup key object.</param>
+        /// <param name="blob">Decrypted data blob.</param>
+        private void Initialize(string distinguishedName, byte[] blob)
+        {
+            this.DistinguishedName = distinguishedName;
+            this.Data = blob;
+
+            // Parse DN to get key ID or pointer type:
+            var keyName = GetSecretNameFromDN(distinguishedName);
+            switch (keyName)
+            {
+                case null:
+                    // We could not parse the DN, so exit with Unknown as the key type
+                    this.Type = DPAPIBackupKeyType.Unknown;
+                    break;
+                case PreferredRSAKeyPointerName:
+                    this.Type = DPAPIBackupKeyType.PreferredRSAKeyPointer;
+                    // Interpret the raw data as Guid
+                    this.KeyId = new Guid(blob);
+                    break;
+                case PreferredLegacyKeyPointerName:
+                    this.Type = DPAPIBackupKeyType.PreferredLegacyKeyPointer;
+                    // Interpret the raw data as Guid
+                    this.KeyId = new Guid(blob);
+                    break;
+                default:
+                    // Actual Key, so we parse its Guid and version
+                    this.KeyId = Guid.Parse(keyName);
+                    this.Type = (DPAPIBackupKeyType)BitConverter.ToInt32(blob, KeyVersionOffset);
                     break;
             }
         }

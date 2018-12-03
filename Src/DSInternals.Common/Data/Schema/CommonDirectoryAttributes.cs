@@ -17,8 +17,11 @@
         public const int DisplayNameId = 131085;
         public const string DN = "distinguishedName";
         public const string DNSHostName = "dNSHostName";
+        public const string DNSRoot = "dnsRoot";
         public const string DNTag = "DNT";
+        public const string FunctionalLevel = "msDS-Behavior-Version";
         public const string NamingContextDNTag = "NCDNT";
+        public const string NamingContextName = "nCName";
         public const string DomainComponent = "dc";
         public const string DomainNamingContexts = "msDS-HasDomainNCs";
         public const string GivenName = "givenName";
@@ -46,6 +49,8 @@
         public const string KdsSecretAgreementParameters = "msKds-SecretAgreementParam";
         public const string KdsEffectiveTime = "msKds-UseStartTime";
         public const string KdsVersion = "msKds-Version";
+        public const string KeyCredentialLink = "msDS-KeyCredentialLink";
+        public const int KeyCredentialLinkId = 592152;
         public const string LastLogon = "lastLogon";
         public const int LastLogonId = 589876;
         public const string LastLogonTimestamp = "lastLogonTimestamp";
@@ -60,6 +65,7 @@
         public const string Member = "member";
         public const string Name = "name";
         public const int NameId = 589825;
+        public const string NetBIOSName = "nETBIOSName";
         public const string NTHash = "unicodePwd";
         public const string NTHashHistory = "ntPwdHistory";
         public const int NTHashHistoryId = 589918;
@@ -76,6 +82,7 @@
         public const string Options = "options";
         public const string OrganizationalUnitName = "ou";
         public const string ParentDNTag = "PDNT";
+        public const string PasswordLastSet = "pwdLastSet";
         public const string PEKList = "pekList";
         public const string PEKChangeInterval = "pekKeyChangeInterval";
         public const string PKIRoamingTimeStamp = "msPKIRoamingTimeStamp";

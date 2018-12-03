@@ -14,7 +14,7 @@
         private const string OnlineParameterSet = "Online";
         private const string OfflineParameterSet = "Offline";
 
-        [Parameter(Mandatory = true, Position = 0, HelpMessage = "TODO", ParameterSetName = OfflineParameterSet)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = OfflineParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Path", "FilePath", "SystemHivePath", "HivePath")]
         public string SystemHiveFilePath
@@ -42,7 +42,7 @@
                 else
                 {
                     // Offline
-                    string hivePathResolved = this.ResolveSinglePath(this.SystemHiveFilePath);
+                    string hivePathResolved = this.ResolveFilePath(this.SystemHiveFilePath);
                     bootKey = BootKeyRetriever.GetBootKey(hivePathResolved);
                 }
                 this.WriteObject(bootKey.ToHex());

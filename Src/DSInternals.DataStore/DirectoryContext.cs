@@ -50,15 +50,28 @@
             try
             {
                 var isamParameters = this.instance.IsamSystemParameters;
-                // TODO: Add param explanations
+
+                // Set the size of the transaction log files to AD defaults.
                 isamParameters.LogFileSize = ADConstants.EseLogFileSize;
+
+                // Delete the log files that are not matching (generation wise) during soft recovery.
                 isamParameters.DeleteOutOfRangeLogs = true;
-                isamParameters.EnableIndexChecking = 1;
+
+                // Check the database for indexes over Unicode key columns that were built using an older version of the NLS library.
+                isamParameters.EnableIndexChecking = true;
+
+                // Automatically clean up indexes over Unicode key columns as necessary to avoid database format changes caused by changes to the NLS library.
                 isamParameters.EnableIndexCleanup = true;
+
+                // Retain only transaction log files that are younger than the current checkpoint.
                 isamParameters.CircularLog = true;
+
+                // Disable all database engine callbacks to application provided functions. This enables us to open Win2016 DBs on non-DC systems.
+                isamParameters.DisableCallbacks = true;
+
                 // TODO: Configure additional ISAM parameters
                 // this.instance.IsamSystemParameters.EnableOnlineDefrag = false;
-                // JET_paramDeleteOldLogs =  1
+
                 this.session = this.instance.CreateSession();
                 this.session.AttachDatabase(dbFilePath);
                 this.attachedDatabasePath = dbFilePath;
@@ -68,6 +81,12 @@
                 this.DistinguishedNameResolver = new DistinguishedNameResolver(this.database, this.Schema);
                 this.LinkResolver = new LinkResolver(this.database, this.Schema);
                 this.DomainController = new DomainController(this);
+            }
+            catch (EsentUnicodeTranslationFailException unicodeException)
+            {
+                // This typically happens while opening a Windows Server 2003 DIT on a newer system.
+                this.Dispose();
+                throw new InvalidDatabaseStateException("There was a problem reading the database, which probably comes from a legacy system. Try defragmenting it first by running the 'esentutl /d ntds.dit' command.", dbFilePath, unicodeException);
             }
             catch
             {

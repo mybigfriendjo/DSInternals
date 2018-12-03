@@ -55,18 +55,61 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{A6D9
 		..\Scripts\Restore-ReferencedPackages.ps1 = ..\Scripts\Restore-ReferencedPackages.ps1
 		..\Scripts\Run-Tests.ps1 = ..\Scripts\Run-Tests.ps1
 		..\Scripts\Sign-ReferencedPackages.ps1 = ..\Scripts\Sign-ReferencedPackages.ps1
+		..\Scripts\Test-StrongName.ps1 = ..\Scripts\Test-StrongName.ps1
+		..\Scripts\Update-PSHelp.ps1 = ..\Scripts\Update-PSHelp.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{9735D030-AEE6-415A-BF03-074076FF776A}"
-	ProjectSection(SolutionItems) = preProject
-		..\Changelog.txt = ..\Changelog.txt
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9735D030-AEE6-415A-BF03-074076FF776A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Database.Isam", "Microsoft.Database.Isam\Microsoft.Database.Isam.csproj", "{21CC632C-B09A-4DB7-BD6E-7F7D2716F58F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Isam.Esent.Interop", "Microsoft.Isam.Esent.Interop\Microsoft.Isam.Esent.Interop.csproj", "{E929E163-52A0-4AAC-917B-6D7FAF70C45E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSInternals.Replication.Model.Test", "DSInternals.Replication.Model.Test\DSInternals.Replication.Model.Test.csproj", "{B7E02A94-DA21-4302-82A6-2D4B7F279F21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSInternals.SAM.Test", "DSInternals.SAM.Test\DSInternals.SAM.Test.csproj", "{7420D8C2-14BE-40F2-B724-A88D27BC6743}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{A47D652E-5EF7-44C0-AD85-4F0F9B738567}"
+	ProjectSection(SolutionItems) = preProject
+		..\Documentation\PowerShell\about_DSInternals.md = ..\Documentation\PowerShell\about_DSInternals.md
+		..\Documentation\PowerShell\Add-ADDBSidHistory.md = ..\Documentation\PowerShell\Add-ADDBSidHistory.md
+		..\Documentation\PowerShell\ConvertFrom-ADManagedPasswordBlob.md = ..\Documentation\PowerShell\ConvertFrom-ADManagedPasswordBlob.md
+		..\Documentation\PowerShell\ConvertFrom-GPPrefPassword.md = ..\Documentation\PowerShell\ConvertFrom-GPPrefPassword.md
+		..\Documentation\PowerShell\ConvertFrom-UnicodePassword.md = ..\Documentation\PowerShell\ConvertFrom-UnicodePassword.md
+		..\Documentation\PowerShell\ConvertTo-GPPrefPassword.md = ..\Documentation\PowerShell\ConvertTo-GPPrefPassword.md
+		..\Documentation\PowerShell\ConvertTo-Hex.md = ..\Documentation\PowerShell\ConvertTo-Hex.md
+		..\Documentation\PowerShell\ConvertTo-KerberosKey.md = ..\Documentation\PowerShell\ConvertTo-KerberosKey.md
+		..\Documentation\PowerShell\ConvertTo-LMHash.md = ..\Documentation\PowerShell\ConvertTo-LMHash.md
+		..\Documentation\PowerShell\ConvertTo-NTHash.md = ..\Documentation\PowerShell\ConvertTo-NTHash.md
+		..\Documentation\PowerShell\ConvertTo-OrgIdHash.md = ..\Documentation\PowerShell\ConvertTo-OrgIdHash.md
+		..\Documentation\PowerShell\ConvertTo-UnicodePassword.md = ..\Documentation\PowerShell\ConvertTo-UnicodePassword.md
+		..\Documentation\PowerShell\Disable-ADDBAccount.md = ..\Documentation\PowerShell\Disable-ADDBAccount.md
+		..\Documentation\PowerShell\DSInternals.md = ..\Documentation\PowerShell\DSInternals.md
+		..\Documentation\PowerShell\Enable-ADDBAccount.md = ..\Documentation\PowerShell\Enable-ADDBAccount.md
+		..\Documentation\PowerShell\Get-ADDBAccount.md = ..\Documentation\PowerShell\Get-ADDBAccount.md
+		..\Documentation\PowerShell\Get-ADDBBackupKey.md = ..\Documentation\PowerShell\Get-ADDBBackupKey.md
+		..\Documentation\PowerShell\Get-ADDBDomainController.md = ..\Documentation\PowerShell\Get-ADDBDomainController.md
+		..\Documentation\PowerShell\Get-ADDBKdsRootKey.md = ..\Documentation\PowerShell\Get-ADDBKdsRootKey.md
+		..\Documentation\PowerShell\Get-ADDBSchemaAttribute.md = ..\Documentation\PowerShell\Get-ADDBSchemaAttribute.md
+		..\Documentation\PowerShell\Get-ADKeyCredential.md = ..\Documentation\PowerShell\Get-ADKeyCredential.md
+		..\Documentation\PowerShell\Get-ADReplAccount.md = ..\Documentation\PowerShell\Get-ADReplAccount.md
+		..\Documentation\PowerShell\Get-ADReplBackupKey.md = ..\Documentation\PowerShell\Get-ADReplBackupKey.md
+		..\Documentation\PowerShell\Get-ADSIAccount.md = ..\Documentation\PowerShell\Get-ADSIAccount.md
+		..\Documentation\PowerShell\Get-BootKey.md = ..\Documentation\PowerShell\Get-BootKey.md
+		..\Documentation\PowerShell\Get-LsaPolicyInformation.md = ..\Documentation\PowerShell\Get-LsaPolicyInformation.md
+		..\Documentation\PowerShell\Get-SamPasswordPolicy.md = ..\Documentation\PowerShell\Get-SamPasswordPolicy.md
+		..\Documentation\PowerShell\Readme.md = ..\Documentation\PowerShell\Readme.md
+		..\Documentation\PowerShell\Remove-ADDBObject.md = ..\Documentation\PowerShell\Remove-ADDBObject.md
+		..\Documentation\PowerShell\Save-DPAPIBlob.md = ..\Documentation\PowerShell\Save-DPAPIBlob.md
+		..\Documentation\PowerShell\Set-ADDBAccountPassword.md = ..\Documentation\PowerShell\Set-ADDBAccountPassword.md
+		..\Documentation\PowerShell\Set-ADDBAccountPasswordHash.md = ..\Documentation\PowerShell\Set-ADDBAccountPasswordHash.md
+		..\Documentation\PowerShell\Set-ADDBBootKey.md = ..\Documentation\PowerShell\Set-ADDBBootKey.md
+		..\Documentation\PowerShell\Set-ADDBDomainController.md = ..\Documentation\PowerShell\Set-ADDBDomainController.md
+		..\Documentation\PowerShell\Set-ADDBPrimaryGroup.md = ..\Documentation\PowerShell\Set-ADDBPrimaryGroup.md
+		..\Documentation\PowerShell\Set-LsaPolicyInformation.md = ..\Documentation\PowerShell\Set-LsaPolicyInformation.md
+		..\Documentation\PowerShell\Set-SamAccountPasswordHash.md = ..\Documentation\PowerShell\Set-SamAccountPasswordHash.md
+		..\Documentation\PowerShell\Test-PasswordQuality.md = ..\Documentation\PowerShell\Test-PasswordQuality.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -166,8 +209,20 @@ Global
 		{B7E02A94-DA21-4302-82A6-2D4B7F279F21}.Debug|x86.Build.0 = Debug|Any CPU
 		{B7E02A94-DA21-4302-82A6-2D4B7F279F21}.Release|x64.ActiveCfg = Release|Any CPU
 		{B7E02A94-DA21-4302-82A6-2D4B7F279F21}.Release|x86.ActiveCfg = Release|Any CPU
+		{7420D8C2-14BE-40F2-B724-A88D27BC6743}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7420D8C2-14BE-40F2-B724-A88D27BC6743}.Debug|x64.Build.0 = Debug|Any CPU
+		{7420D8C2-14BE-40F2-B724-A88D27BC6743}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7420D8C2-14BE-40F2-B724-A88D27BC6743}.Debug|x86.Build.0 = Debug|Any CPU
+		{7420D8C2-14BE-40F2-B724-A88D27BC6743}.Release|x64.ActiveCfg = Release|Any CPU
+		{7420D8C2-14BE-40F2-B724-A88D27BC6743}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A47D652E-5EF7-44C0-AD85-4F0F9B738567} = {9735D030-AEE6-415A-BF03-074076FF776A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20AC2CF5-7C26-407B-B0A5-1BDE0FABABA8}
 	EndGlobalSection
 EndGlobal

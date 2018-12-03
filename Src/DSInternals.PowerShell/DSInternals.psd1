@@ -8,7 +8,7 @@
 RootModule = 'DSInternals.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.23'
+ModuleVersion = '3.0'
 
 # ID used to uniquely identify this module
 GUID = '766b3ad8-eb78-48e6-84bd-61b31d96b53e'
@@ -60,45 +60,53 @@ ProcessorArchitecture = 'None'
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-FormatsToProcess = 'DSInternals.DSAccount.format.ps1xml',
-				   'DSInternals.PasswordQualityTestResult.format.ps1xml',
-				   'DSInternals.KdsRootKey.format.ps1xml',
-				   'DSInternals.Hash.format.ps1xml',
-				   'DSInternals.SamDomainPasswordInformation.format.ps1xml',
-				   'DSInternals.RoamedCredential.format.ps1xml'
+FormatsToProcess = 'Views\DSInternals.Hash.format.ps1xml',
+                    'Views\DSInternals.RoamedCredential.format.ps1xml',
+                    'Views\DSInternals.Kerberos.format.ps1xml',
+                    'Views\DSInternals.KeyCredential.format.ps1xml',
+                    'Views\DSInternals.DSAccount.format.ps1xml',
+                    'Views\DSInternals.DSAccount.ExportViews.format.ps1xml',
+                    'Views\DSInternals.PasswordQualityTestResult.format.ps1xml',
+                    'Views\DSInternals.KdsRootKey.format.ps1xml',
+                    'Views\DSInternals.SamDomainPasswordInformation.format.ps1xml',
+                    'Views\DSInternals.LsaPolicyInformation.format.ps1xml'
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @('DSInternals.PowerShell.dll')
 
 # Functions to export from this module
-# FunctionsToExport = @()
+FunctionsToExport = @()
 
 # Cmdlets to export from this module
 CmdletsToExport = 'ConvertTo-NTHash', 'ConvertTo-LMHash', 'Set-SamAccountPasswordHash',
-			   'ConvertFrom-UnicodePassword', 'ConvertTo-UnicodePassword',
+               'ConvertFrom-UnicodePassword', 'ConvertTo-UnicodePassword',
                'ConvertTo-OrgIdHash', 'ConvertFrom-GPPrefPassword',
                'ConvertTo-GPPrefPassword', 'Add-ADDBSidHistory',
                'Set-ADDBPrimaryGroup', 'Get-ADDBDomainController',
                'Set-ADDBDomainController', 'Get-ADDBSchemaAttribute',
                'Remove-ADDBObject', 'Get-ADDBAccount', 'Get-BootKey',
-               'Get-ADReplAccount', 'ConvertTo-Hex',
-			   'ConvertFrom-ADManagedPasswordBlob',
-			   'Get-ADDBBackupKey', 'Get-ADReplBackupKey', 'Save-DPAPIBlob',
-			   'Set-ADDBBootKey','ConvertTo-NTHashDictionary', 'Test-PasswordQuality',
-			   'Get-ADDBKdsRootKey', 'Get-SamPasswordPolicy', 'Get-ADSIAccount',
-			   'Enable-ADDBAccount', 'Disable-ADDBAccount'
+               'Get-ADReplAccount', 'ConvertTo-Hex', 'ConvertTo-KerberosKey',
+               'ConvertFrom-ADManagedPasswordBlob',
+               'Get-ADDBBackupKey', 'Get-ADReplBackupKey', 'Save-DPAPIBlob',
+               'Set-ADDBBootKey', 'Test-PasswordQuality',
+               'Get-ADDBKdsRootKey', 'Get-SamPasswordPolicy', 'Get-ADSIAccount',
+               'Enable-ADDBAccount', 'Disable-ADDBAccount', 'Get-ADKeyCredential',
+               'Set-ADDBAccountPassword', 'Set-ADDBAccountPasswordHash', 'Get-LsaPolicyInformation',
+               'Set-LSAPolicyInformation'
 
 # Variables to export from this module
-# VariablesToExport = @()
+VariablesToExport = @()
 
 # Aliases to export from this module
 AliasesToExport = 'Set-WinUserPasswordHash', 'Set-ADAccountPasswordHash',
-				  'ConvertFrom-UnattendXmlPassword', 'ConvertTo-AADHash',
-				  'ConvertTo-MsoPasswordHash', 'Get-ADReplicationAccount',
-				  'ConvertFrom-ManagedPasswordBlob', 'Get-SysKey', 'Set-ADDBSysKey',
-				  'New-NTHashSet', 'Test-ADPasswordQuality',
-				  'Test-ADDBPasswordQuality', 'Test-ADReplPasswordQuality',
-				  'Get-ADPasswordPolicy', 'Get-ADDefaultPasswordPolicy'
+                  'ConvertFrom-UnattendXmlPassword', 'ConvertTo-AADHash',
+                  'ConvertTo-MsoPasswordHash', 'Get-ADReplicationAccount',
+                  'ConvertFrom-ManagedPasswordBlob', 'Get-SysKey', 'Set-ADDBSysKey',
+                  'New-NTHashSet', 'Test-ADPasswordQuality',
+                  'Test-ADDBPasswordQuality', 'Test-ADReplPasswordQuality',
+                  'Get-ADPasswordPolicy', 'Get-ADDefaultPasswordPolicy', 'Get-KeyCredential',
+                  'Get-KeyCredentialLink', 'Get-ADKeyCredentialLink', 'Get-LsaPolicy',
+                  'Set-LsaPolicy'
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()
@@ -115,20 +123,31 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'ActiveDirectory', 'Security', 'PSModule'
+        Tags = 'ActiveDirectory', 'Security', 'SAM', 'LSA', 'PSModule'
 
         # A URL to the license for this module.
         LicenseUri = 'https://raw.githubusercontent.com/MichaelGrafnetter/DSInternals/master/LICENSE.md'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://www.dsinternals.com/en'
+        ProjectUri = 'https://github.com/MichaelGrafnetter/DSInternals'
 
         # A URL to an icon representing this module.
         IconUri = 'https://www.dsinternals.com/wp-content/uploads/ad.png'
 
         # ReleaseNotes of this module
         ReleaseNotes = @"
-- Fixed 2 minor bugs in the Test-PasswordQuality cmdlet.
+- Added the Set-ADDBAccountPassword and Set-ADDBAccountPasswordHash for offline password modification.
+- The Test-PasswordQuality cmdlet now supports NTLM hash list from haveibeenpwned.com.
+- Added the Get-ADKeyCredential for linked credential generation (AKA Windows Hello for Business).
+- The Get-ADDBAccount, Get-ADReplAccount and Get-ADSIAccount cmdlets now display linked credentials.
+- Databases from Windows Server 2016 can now be read on non-DCs.
+- Added the ConvertTo-KerberosKey cmdlet for key generation.
+- The Save-DPAPIBlob now generates scripts for mimikatz.
+- The Save-DPAPIBlob cmdlet now accepts pipeline input from both Get-ADDBBackupKey and ADDBAccount cmdlets.
+- Added Views JohnNTHistory, HashcatNTHistory and NTHashHistory.
+- The Get-ADDBDomainController cmdlet now displays domain and forest functional levels.
+- The Set-ADDBDomainController cmdlet can now be used to modify backup expiration.
+- The Get-ADDBAccount cmdlet now reports progress when retrieving multiple accounts.
 "@
     } # End of PSData hashtable
 

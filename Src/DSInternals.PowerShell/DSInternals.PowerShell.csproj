@@ -58,9 +58,14 @@
     <Compile Include="Commands\Datastore\DisableADDBAccountCommand.cs" />
     <Compile Include="Commands\Datastore\GetADDBKdsRootKeyCommand.cs" />
     <Compile Include="Commands\Datastore\EnableADDBAccountCommand.cs" />
-    <Compile Include="Commands\Hash\ConvertToNTHashDictionaryCommand.cs" />
+    <Compile Include="Commands\Hash\ConvertToKerberosKeyCommand.cs" />
+    <Compile Include="Commands\Datastore\SetADDBAccountPasswordHashCommand.cs" />
+    <Compile Include="Commands\Datastore\SetADDBAccountPasswordCommand.cs" />
     <Compile Include="Commands\Misc\ConvertFromADManagedPasswordBlobCommand.cs" />
-    <Compile Include="Commands\Misc\GetSamPasswordPolicyCommand.cs" />
+    <Compile Include="Commands\Misc\GetADKeyCredential.cs" />
+    <Compile Include="Commands\LSA\SetLsaPolicyInformationCommand.cs" />
+    <Compile Include="Commands\LSA\GetLsaPolicyInformation.cs" />
+    <Compile Include="Commands\LSA\GetSamPasswordPolicyCommand.cs" />
     <Compile Include="Commands\Misc\TestPasswordQualityCommand.cs" />
     <Compile Include="Commands\Misc\ConvertToHexCommand.cs" />
     <Compile Include="Commands\Datastore\SetADDBBootKeyCommand.cs" />
@@ -90,6 +95,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Types\DomainController.cs" />
+    <Compile Include="Types\LsaPolicyInformation.cs" />
     <Compile Include="Types\PasswordQualityTestResult.cs" />
     <Compile Include="Types\SchemaAttribute.cs" />
     <Compile Include="Utils\AcceptHexStringAttribute.cs" />
@@ -149,34 +155,51 @@
     <Content Include="en-US\about_DSInternals.help.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="ADDBCommandHierarchy.cd" />
-    <Content Include="DSInternals.Hash.format.ps1xml">
+    <None Include="Commands\ADDBCommandHierarchy.cd" />
+    <Content Include="en-US\DSInternals.PowerShell.dll-Help.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\DSInternals.Hash.format.ps1xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DSInternals.KdsRootKey.format.ps1xml">
+    <Content Include="Views\DSInternals.KdsRootKey.format.ps1xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DSInternals.PasswordQualityTestResult.format.ps1xml">
+    <Content Include="Views\DSInternals.PasswordQualityTestResult.format.ps1xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DSInternals.psd1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DSInternals.SamDomainPasswordInformation.format.ps1xml">
+    <Content Include="Views\DSInternals.SamDomainPasswordInformation.format.ps1xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DSInternals.RoamedCredential.format.ps1xml">
+    <Content Include="Views\DSInternals.RoamedCredential.format.ps1xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\DSInternals.KeyCredential.format.ps1xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\DSInternals.DSAccount.ExportViews.format.ps1xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\DSInternals.Kerberos.format.ps1xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Commands\ADReplCommandHierarchy.cd" />
+    <None Include="Commands\ADSICommandHierarchy.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="Run-Cmdlets.ps1" />
-    <Content Include="DSInternals.DSAccount.format.ps1xml">
+    <Content Include="Views\DSInternals.DSAccount.format.ps1xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
@@ -189,6 +212,9 @@
     <None Include="Tests\ConvertTo-Hex.Tests.ps1" />
     <None Include="Tests\ConvertTo-LMHash.Tests.ps1" />
     <None Include="Tests\ConvertTo-NTHash.Tests.ps1" />
+    <Content Include="Views\DSInternals.LsaPolicyInformation.format.ps1xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

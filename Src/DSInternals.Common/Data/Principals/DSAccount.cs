@@ -1,7 +1,6 @@
 ﻿namespace DSInternals.Common.Data
 {
     using DSInternals.Common.Cryptography;
-    using DSInternals.Common.Exceptions;
     using System;
     using System.Collections.Generic;
     using System.Security.AccessControl;
@@ -37,6 +36,9 @@
 
             // Credential Roaming
             this.LoadRoamedCredentials(dsObject);
+
+            // Windows Hello for Business
+            this.LoadKeyCredentials(dsObject);
 
             // Hashes and Supplemental Credentials
             this.LoadHashes(dsObject, pek);
@@ -312,6 +314,15 @@
             private set;
         }
 
+        /// <summary>
+        /// Device Registration / Windows Hello for Business Keys
+        /// </summary>
+        public KeyCredential[] KeyCredentials
+        {
+            get;
+            private set;
+        }
+
         protected void LoadAccountInfo(DirectoryObject dsObject)
         {
 
@@ -430,55 +441,72 @@
         /// </summary>
         protected void LoadRoamedCredentials(DirectoryObject dsObject)
         {
-            try
+            // These attributes have been added in Windows Server 2008, so they might not be present on older DCs.
+            byte[] roamingTimeStamp;
+            dsObject.ReadAttribute(CommonDirectoryAttributes.PKIRoamingTimeStamp, out roamingTimeStamp);
+
+            if (roamingTimeStamp == null)
             {
-                byte[] roamingTimeStamp;
-                dsObject.ReadAttribute(CommonDirectoryAttributes.PKIRoamingTimeStamp, out roamingTimeStamp);
-
-                if (roamingTimeStamp == null)
-                {
-                    // This account does not have roamed credentials, so we skip their processing
-                    return;
-                }
-
-                // The 16B of the value consist of two 8B actual time stamps.
-                long createdTimeStamp = BitConverter.ToInt64(roamingTimeStamp, 0);
-                long modifiedTimeStamp = BitConverter.ToInt64(roamingTimeStamp, sizeof(long));
-
-                this.RoamedCredentialsCreated = DateTime.FromFileTime(createdTimeStamp);
-                this.RoamedCredentialsModified = DateTime.FromFileTime(modifiedTimeStamp);
-
-                byte[][] masterKeyBlobs;
-                dsObject.ReadLinkedValues(CommonDirectoryAttributes.PKIDPAPIMasterKeys, out masterKeyBlobs);
-
-                byte[][] credentialBlobs;
-                dsObject.ReadLinkedValues(CommonDirectoryAttributes.PKIAccountCredentials, out credentialBlobs);
-
-                // Parse the blobs and combine them into one array.
-                var credentials = new List<RoamedCredential>();
-
-                if (masterKeyBlobs != null)
-                {
-                    foreach (var blob in masterKeyBlobs)
-                    {
-                        credentials.Add(new RoamedCredential(blob, this.SamAccountName, this.Sid));
-                    }
-                }
-
-                if(credentialBlobs != null)
-                {
-                    foreach (var blob in credentialBlobs)
-                    {
-                        credentials.Add(new RoamedCredential(blob, this.SamAccountName, this.Sid));
-                    }
-                }
-
-                this.RoamedCredentials = credentials.ToArray();
+                // This account does not have roamed credentials, so we skip their processing
+                return;
             }
-            catch (SchemaAttributeNotFoundException)
+
+            // The 16B of the value consist of two 8B actual time stamps.
+            long createdTimeStamp = BitConverter.ToInt64(roamingTimeStamp, 0);
+            long modifiedTimeStamp = BitConverter.ToInt64(roamingTimeStamp, sizeof(long));
+
+            this.RoamedCredentialsCreated = DateTime.FromFileTime(createdTimeStamp);
+            this.RoamedCredentialsModified = DateTime.FromFileTime(modifiedTimeStamp);
+
+            byte[][] masterKeyBlobs;
+            dsObject.ReadLinkedValues(CommonDirectoryAttributes.PKIDPAPIMasterKeys, out masterKeyBlobs);
+
+            byte[][] credentialBlobs;
+            dsObject.ReadLinkedValues(CommonDirectoryAttributes.PKIAccountCredentials, out credentialBlobs);
+
+            // Parse the blobs and combine them into one array.
+            var credentials = new List<RoamedCredential>();
+
+            if (masterKeyBlobs != null)
             {
-                // These attributes have been added in Windows Server 2008, so they might not be present on older DCs.
+                foreach (var blob in masterKeyBlobs)
+                {
+                    credentials.Add(new RoamedCredential(blob, this.SamAccountName, this.Sid));
+                }
             }
+
+            if(credentialBlobs != null)
+            {
+                foreach (var blob in credentialBlobs)
+                {
+                    credentials.Add(new RoamedCredential(blob, this.SamAccountName, this.Sid));
+                }
+            }
+
+            this.RoamedCredentials = credentials.ToArray();
+        }
+
+        /// <summary>
+        /// Loads key credentials.
+        /// </summary>
+        protected void LoadKeyCredentials(DirectoryObject dsObject)
+        {
+            // This attribute has been added in Windows Server 2016, so it might not be present on older DCs.
+            byte[][] keyCredentialBlobs;
+            dsObject.ReadLinkedValues(CommonDirectoryAttributes.KeyCredentialLink, out keyCredentialBlobs);
+
+            // Parse the blobs and combine them into one array.
+            var credentials = new List<KeyCredential>();
+
+            if (keyCredentialBlobs != null)
+            {
+                foreach (var blob in keyCredentialBlobs)
+                {
+                    credentials.Add(new KeyCredential(blob));
+                }
+            }
+
+            this.KeyCredentials = credentials.ToArray();
         }
     }
 }

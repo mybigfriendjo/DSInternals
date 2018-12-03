@@ -9,18 +9,13 @@ using System.Management.Automation;
 namespace DSInternals.PowerShell.Commands
 {
     [Cmdlet(VerbsCommon.Get, "ADDBAccount")]
-    // TODO: output type
-    // TODO: Accept *
     [OutputType(typeof(DSAccount))]
     public class GetADDBAccountCommand : ADDBPrincipalCommandBase
     {
-        protected const string parameterSetAll = "All";
+        private const int ProgressReportingInterval = 25;
+        protected const string ParameterSetAll = "All";
 
-        [Parameter(
-            Mandatory = true,
-            HelpMessage = "TODO",
-            ParameterSetName = parameterSetAll
-        )]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetAll)]
         [Alias("AllAccounts", "ReturnAllAccounts")]
         public SwitchParameter All
         {
@@ -28,10 +23,7 @@ namespace DSInternals.PowerShell.Commands
             set;
         }
 
-        [Parameter(
-            Mandatory = false,
-            HelpMessage = "TODO"
-        )]
+        [Parameter(Mandatory = false)]
         [ValidateNotNull]
         [ValidateCount(BootKeyRetriever.BootKeyLength, BootKeyRetriever.BootKeyLength)]
         [AcceptHexString]
@@ -46,7 +38,7 @@ namespace DSInternals.PowerShell.Commands
         {
             // TODO: Exception handling: Object not found, malformed DN, ...
             // TODO: Map DSAccount to transfer object
-            if(this.ParameterSetName == parameterSetAll)
+            if(this.ParameterSetName == ParameterSetAll)
             {
                 this.ReturnAllAccounts(this.BootKey);
             }
@@ -58,10 +50,31 @@ namespace DSInternals.PowerShell.Commands
 
         private void ReturnAllAccounts(byte[] bootKey)
         {
+            // This operation might take some time so we report its status.
+            var progress = new ProgressRecord(4, "Reading accounts from AD database", "Starting...");
+            int accountCount = 0;
+
+            // Disable the progress bar as we do not know the total number of accounts.
+            progress.PercentComplete = -1;
+            this.WriteProgress(progress);
+
             foreach (var account in this.DirectoryAgent.GetAccounts(bootKey))
             {
                 this.WriteObject(account);
+                accountCount++;
+
+                // Update progress
+                if(accountCount % ProgressReportingInterval == 1)
+                {
+                    // We do not want to change the progress too often, for performance reasons.
+                    progress.StatusDescription = String.Format("{0}+ accounts", accountCount);
+                    this.WriteProgress(progress);
+                }
             }
+
+            // Finished
+            progress.RecordType = ProgressRecordType.Completed;
+            this.WriteProgress(progress);
         }
 
         private void ReturnSingleAccount(byte[] bootKey)

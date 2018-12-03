@@ -1,14 +1,13 @@
 ﻿namespace DSInternals.DataStore
 {
+    using DSInternals.Common;
+    using DSInternals.Common.Data;
+    using DSInternals.Common.Exceptions;
+    using Microsoft.Database.Isam;
+    using Microsoft.Isam.Esent.Interop;
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
-    using DSInternals.Common.Data;
-    using Microsoft.Database.Isam;
-    using DSInternals.Common;
-    using DSInternals.Common.Exceptions;
-    using Microsoft.Isam.Esent.Interop;
 
     /// <summary>
     /// The ActiveDirectorySchema class represents the schema partition for a particular domain.
@@ -20,6 +19,7 @@
         private const string SystemColSuffix = "_col";
         private const string SystemColIndexSuffix = "_index";
         private const char IndexNameComponentSeparator = '_';
+        private const string ParentDNTagIndex = "PDNT_index";
 
         private IDictionary<int, SchemaAttribute> attributesByInternalId;
         private IDictionary<string, SchemaAttribute> attributesByName;
@@ -80,6 +80,12 @@
             {
                 throw new SchemaAttributeNotFoundException(attributeName);
             }
+        }
+
+        public bool ContainsAttribute(string attributeName)
+        {
+            Validator.AssertNotNullOrWhiteSpace(attributeName, "attributeName");
+            return this.attributesByName.ContainsKey(attributeName.ToLower());
         }
 
         public SchemaAttribute FindAttribute(int internalId)
@@ -149,7 +155,11 @@
                     }
                 }
             }
-        }
+
+            // Manually assign PDNT_index to PDNT_col
+            var pdnt = FindAttribute(CommonDirectoryAttributes.ParentDNTag);
+            pdnt.Index = ParentDNTagIndex;
+    }
 
         private void LoadColumnList(ColumnCollection columns)
         {

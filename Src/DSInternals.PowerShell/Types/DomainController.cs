@@ -7,60 +7,6 @@
     // Transport object
     public class DomainController : IDomainController
     {
-        public DateTime? BackupExpiration
-        {
-            get;
-            set;
-        }
-
-        public long? BackupUsn
-        {
-            get;
-            set;
-        }
-
-        public string Domain
-        {
-            get;
-            set;
-        }
-
-        public SecurityIdentifier DomainSid
-        {
-            get;
-            set;
-        }
-
-        public System.Guid DsaGuid
-        {
-            get;
-            set;
-        }
-
-        public int? Epoch
-        {
-            get;
-            set;
-        }
-
-        public long HighestCommittedUsn
-        {
-            get;
-            set;
-        }
-
-        public Guid InvocationId
-        {
-            get;
-            set;
-        }
-
-        public bool IsGlobalCatalog
-        {
-            get;
-            set;
-        }
-
         public string Name
         {
             get;
@@ -73,13 +19,103 @@
             set;
         }
 
-        public int NTDSSettingsDNT
+        public DistinguishedName ServerReference
+        {
+            get;
+            set;
+        }
+
+        public string DomainName
+        {
+            get;
+            set;
+        }
+
+        public string ForestName
+        {
+            get;
+            set;
+        }
+
+        public string NetBIOSDomainName
+        {
+            get;
+            set;
+        }
+
+        public SecurityIdentifier DomainSid
+        {
+            get;
+            set;
+        }
+
+        public Guid? DomainGuid
+        {
+            get;
+            set;
+        }
+
+        public Guid? Guid
+        {
+            get;
+            set;
+        }
+
+        public SecurityIdentifier Sid
+        {
+            get;
+            set;
+        }
+
+        public FunctionalLevel DomainMode
+        {
+            get;
+            set;
+        }
+
+        public FunctionalLevel ForestMode
+        {
+            get;
+            set;
+        }
+
+        public string SiteName
+        {
+            get;
+            set;
+        }
+
+        public System.Guid DsaGuid
+        {
+            get;
+            set;
+        }
+                
+        public Guid InvocationId
+        {
+            get;
+            set;
+        }
+
+        public bool IsADAM
+        {
+            get;
+            set;
+        }
+
+        public bool IsGlobalCatalog
         {
             get;
             set;
         }
 
         public DomainControllerOptions Options
+        {
+            get;
+            set;
+        }
+
+        public string OSName
         {
             get;
             set;
@@ -103,19 +139,7 @@
             set;
         }
 
-        public string OSName
-        {
-            get;
-            set;
-        }
-
         public DistinguishedName DomainNamingContext
-        {
-            get;
-            set;
-        }
-
-        public DistinguishedName ServerReference
         {
             get;
             set;
@@ -133,7 +157,7 @@
             set;
         }
 
-        public string SiteName
+        public string[] WritablePartitions
         {
             get;
             set;
@@ -145,19 +169,31 @@
             set;
         }
 
+        public long HighestCommittedUsn
+        {
+            get;
+            set;
+        }
+
         public long? UsnAtIfm
         {
             get;
             set;
         }
 
-        public string[] WritablePartitions
+        public long? BackupUsn
         {
             get;
             set;
         }
 
-        public bool IsADAM
+        public DateTime? BackupExpiration
+        {
+            get;
+            set;
+        }
+
+        public int? Epoch
         {
             get;
             set;

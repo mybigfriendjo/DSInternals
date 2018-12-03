@@ -42,10 +42,14 @@ New-Alias -Name Get-ADReplicationAccount         -Value Get-ADReplAccount
 New-Alias -Name ConvertFrom-ManagedPasswordBlob  -Value ConvertFrom-ADManagedPasswordBlob
 New-Alias -Name Get-SysKey                       -Value Get-BootKey
 New-Alias -Name Set-ADDBSysKey                   -Value Set-ADDBBootKey
-New-Alias -Name New-NTHashDictionary             -Value ConvertTo-NTHashDictionary
 New-Alias -Name Test-ADPasswordQuality           -Value Test-PasswordQuality
 New-Alias -Name Test-ADDBPasswordQuality         -Value Test-PasswordQuality
 New-Alias -Name Test-ADReplPasswordQuality       -Value Test-PasswordQuality
+New-Alias -Name Get-KeyCredential                -Value Get-ADKeyCredential
+New-Alias -Name Get-KeyCredentialLink            -Value Get-ADKeyCredential
+New-Alias -Name Get-ADKeyCredentialLink          -Value Get-ADKeyCredential
+New-Alias -Name Get-LsaPolicy                    -Value Get-LsaPolicyInformation
+New-Alias -Name Set-LsaPolicy                    -Value Set-LsaPolicyInformation
 
 # Export the aliases
 Export-ModuleMember -Alias * -Cmdlet *
